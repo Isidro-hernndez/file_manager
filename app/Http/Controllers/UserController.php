@@ -23,7 +23,7 @@ class UserController extends Controller
 
 		//dd($user::with('folders', 'files')->get());
 		$data = [
-			'user' => $user::with('folders', 'files')->get(),
+			'user' => $user::with('folders', 'files')->first(),
 			'status' => 'success',
 			'message' => '',
 		];

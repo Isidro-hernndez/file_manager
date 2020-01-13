@@ -16,6 +16,7 @@ class CreateFilesName extends Migration
 		Schema::create('files', function (Blueprint $table) {
 			$table->bigIncrements('id');
 			$table->string('name');
+			$table->string('url');
 			$table->string('type');
 			$table->unsignedBigInteger('folder_id');
 

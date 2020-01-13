@@ -10,7 +10,7 @@ window.Vue = require('vue');
 
 import vuetify from './vuetify';
 
-import App from './App'
+import App from './App.vue'
 
 
 /**

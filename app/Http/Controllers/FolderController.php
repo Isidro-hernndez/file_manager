@@ -37,7 +37,8 @@ class FolderController extends Controller
     {
 		$folder = new Folder;
 		$folder->name = $request->name;
-		$folder->user_id = 1;
+        //$folder->user_id = 1;
+        $folder->user_id = $request->user_id;
 		$folder->save();
 
 		$data = [

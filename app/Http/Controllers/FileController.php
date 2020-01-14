@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\File;
 use Illuminate\Http\Request;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class FileController extends Controller
 {
@@ -36,16 +38,33 @@ class FileController extends Controller
     public function store(Request $request)
     {
         //
-		$file = new File;
+		$status = 'error';
+		$message = 'Problema al subir archivo';
+		$user = Auth::user();
+		if ( $request->hasFile('file')  && $user) {
+
+			$file = new File;
+			$file->name = $request->file->getClientOriginalName();
+			$file->type = $request->file->getMimeType();
+			$file->url = $request->file('file')->store('public');
+			
+			$file->folder_id = $request->folder_id;
+			
+			$file->save();	
+
+			$status = 'success';
+			$message = 'Archivo almacenado con exito';
+		}
+/*		$file = new File;
 		$file->name = $request->name;
 		$file->folder_id = $request->folder_id;
 		$file->type = $request->type;
-		$file->save();
+		$file->save(); */
 
 		$data = [
-			'file' => $file,
-			'status' => 'success',
-			'message' => 'Creación exitosa',
+			'file' => is_null($file) ? null : $file,
+			'status' => $status,
+			'message' => $message,
 		];
 
 		return response()->json($data);
@@ -95,4 +114,6 @@ class FileController extends Controller
     {
         //
     }
+
+	
 }

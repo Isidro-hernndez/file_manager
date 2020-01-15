@@ -2,7 +2,7 @@
 	<v-row justify="center">
 		<v-dialog  v-model="dialog" persistent max-width="400">
 			<v-card v-if="type == 'login'">
-				<v-card-title class="headline">Registrar nuevo usuario</v-card-title>
+				<v-card-title class="headline">Iniciar Sesión</v-card-title>
 				<v-col cols="12" sm="12" md="12">
 					<v-form>
 						<v-col cols="12" md="12">
@@ -21,7 +21,17 @@
 				</v-card-actions>
 			</v-card>
 			<v-card v-else>
-				<v-card-title class="headline">Iniciar sesión</v-card-title>
+				<v-card-title class="headline">Registrar Usuario</v-card-title>
+				<v-alert v-if="errors.name !=  null"
+					color="#C51162"
+					dark
+					icon="mdi-error"
+					border="right"
+					>
+					<ul v-for="error in errors.name">
+						<li>{{error}}</li>
+					</ul>
+				</v-alert>
 				<v-col cols="12" sm="12" md="12">
 					<v-form>
 						<v-col cols="12" md="12">
@@ -69,6 +79,7 @@ export default {
 				email: '',
 				password: ''
 			},
+			errors:[],
 			create: {},
 		}
 	},
@@ -110,6 +121,7 @@ export default {
 		register() {
 			let urlRegister = 'api/apiRegister';
 			axios.post(urlRegister, this.create).then((response) => {
+				localStorage.setItem('user', JSON.stringify(response.data.user));
 				console.log(response);
 				this.user = response;
 				let url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/';

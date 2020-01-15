@@ -17,6 +17,7 @@ class ApiTokenController extends Controller
 		$desc = 'Usuario registrado';
 		// return response()->json($request);
 		$token = Str::random(60);
+
 		$user = User::create([
 			'name' => $request->name,
 			'last_name' => $request->last_name,
@@ -24,6 +25,9 @@ class ApiTokenController extends Controller
 			'password' => Hash::make($request->password),
 			'api_token' => hash('sha256', $token),
 		]);
+		$user->forceFill([
+			'api_token' => hash('sha256', $token),
+		])->save();
 		return response()->json([
 			'user' => $user,
 			'status' => $status,

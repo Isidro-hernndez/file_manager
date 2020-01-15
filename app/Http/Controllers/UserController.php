@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -12,6 +13,11 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     public function index()
     {
         //
@@ -19,7 +25,8 @@ class UserController extends Controller
 
 	public function get(Request $request)
 	{
-		$user = User::Find($request->id);
+        $user = Auth::user();
+		//$user = User::Find($request->id);
 
 		//dd($user::with('folders', 'files')->get());
 		$data = [

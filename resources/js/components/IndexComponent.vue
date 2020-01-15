@@ -260,7 +260,8 @@ export default {
 			this.not_user = false;
 		},
 		getData() {
-			axios.get('api/usuarios?id=1')
+			console.log(this.user);
+			axios.get('api/usuarios?api_token=' + this.user.api_token)
 				.then((response) => {
 					this.user = response.data.user;
 					console.log(this.user);
@@ -316,8 +317,11 @@ export default {
 		},
 	},
 	mounted() {
-		let user = JSON.parse(localStorage.getItem('user'));
-		if ( user ){
+		let userSaved = JSON.parse(localStorage.getItem('user'));
+		console.log('bebesita');
+		console.log(userSaved);
+		if ( userSaved ){
+			this.user = userSaved
 			this.getData();
 		}
 		else {

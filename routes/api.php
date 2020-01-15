@@ -27,7 +27,7 @@ Route::name('api_file_update_path')->post('/archivos/', 'FileController@Update')
 
 Route::name('api_file_delete_path')->delete('/archivos/', 'FileController@destroy');
 
-Route::get('usuarios', 'UserController@get');
+
 
 Route::post('/apiLogin', 'ApiTokenController@update')->name('apiLogin');
 Route::post('/apiRegister', 'ApiTokenController@register')->name('apiRegister');
@@ -40,5 +40,6 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 	Route::name('api_files_from_folder')->post('/carpetas/archivos', 'FolderController@getFiles');
 
+	Route::post('usuarios', 'UserController@get');
 
 });

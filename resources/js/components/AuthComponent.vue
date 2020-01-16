@@ -91,10 +91,11 @@ export default {
 					console.log(response);
 					if(response.data.status != 'error'){
 						localStorage.setItem('user', JSON.stringify(response.data.user));
-
+						console.log(response.data.user);
+						this.user = response.data.user;
 //						let url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/admin?api_token=' + response.data.user.api_token;
 						let url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/';
-						console.log(url);
+						//console.log(url);
 						window.location.href = url;
 					}
 					else{

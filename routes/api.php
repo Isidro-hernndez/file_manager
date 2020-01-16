@@ -40,6 +40,6 @@ Route::group(['middleware' => 'auth:api'], function () {
 
 	Route::name('api_files_from_folder')->post('/carpetas/archivos', 'FolderController@getFiles');
 
-	Route::post('usuarios', 'UserController@get');
+	Route::get('usuarios', 'UserController@get');
 
 });

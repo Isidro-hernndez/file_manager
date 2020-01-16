@@ -25,12 +25,17 @@ class UserController extends Controller
 
 	public function get(Request $request)
 	{
+        //$rqu = $request->user();
         $user = Auth::user();
+        //dd($user);
 		//$user = User::Find($request->id);
 
-		//dd($user::with('folders', 'files')->get());
+		//dd($user->with('folders', 'files')->toSql());
 		$data = [
-			'user' => $user::with('folders', 'files')->first(),
+            //'user' => $user->with('folders', 'files')->get(),
+            'user' => $user,
+            'folders' => $user->folders,
+            'files' => $user->files,
 			'status' => 'success',
 			'message' => '',
 		];

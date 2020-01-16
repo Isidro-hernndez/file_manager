@@ -73,11 +73,11 @@
 						<pre>{{ files }}</pre>
 						<pre>{{ dialog }}</pre>
 
-				</v-col>-->
+				</v-col> -->
 					<template>
 						<v-card class="d-inline-block mx-auto" v-for="file in user.files" :key="file.id">
 							<v-container>
-								<v-row justify="space-between">
+								<v-row justify="left">
 									<v-col cols="auto">
 										<v-img height="200"	width="200" :src="file.url"></v-img>
 									</v-col>
@@ -85,18 +85,23 @@
 									<v-col cols="auto" class="text-center pl-0">
 										<v-row class="flex-column ma-0 fill-height" justify="center">
 											<v-col class="px-0">
-												<a :href="file.url" download>
-													<v-btn icon>
+												<a :href="file.url" download data-toggle="tooltip" title="Descargar">
+													<v-btn icon >
 														<v-icon>mdi-file-download</v-icon>
 													</v-btn>
 												</a>
 											</v-col>
 
-										<!--	<v-col class="px-0">
-												<v-btn icon>
-													<v-icon>mdi-delete</v-icon>
+										<v-col class="px-0">
+												<v-btn icon data-toggle="tooltip" title="Enviar por email" @click="openOptions('email', file)">
+													<v-icon>mdi-email</v-icon>
 												</v-btn>
-										</v-col>-->
+										</v-col>
+										<v-col class="px-0" data-toggle="tooltip" title="Compartir por link" @click="openOptions('share', file)">
+											<v-btn icon>
+												<v-icon>mdi-link</v-icon>
+											</v-btn>
+										</v-col>
 										</v-row>
 									</v-col>
 								</v-row>
@@ -191,6 +196,92 @@
 				</v-dialog>
 			</v-row>
 		</template>
+		<!---->
+		<template>
+			<div class="text-center">
+			  <v-dialog
+				v-model="alert"
+				width="500"
+			  >
+		  
+				<v-card>
+				  <v-card-title
+					class="headline grey lighten-2"
+					primary-title
+				  >
+					<v-text-field  label="Enviar a:" placeholder="example@example.com" outlined v-model="email_data.email_reciver"></v-text-field>
+				  </v-card-title>
+		  
+				  <v-card-text>
+					<v-col cols="12" md="12">
+						<v-text-field label="Titulo" outlined v-model="email_data.subject"></v-text-field>
+						<v-textarea
+						  outlined
+						  name="input-7-4"
+						  label="Escribir mensaje"
+						  value=""
+						  v-model="email_data.message"
+						></v-textarea>
+					  </v-col>
+				  </v-card-text>
+				  	<v-row justify="center">
+				  		<v-col cols="auto">
+							<v-img height="200"	width="200" :src="fileSelected.url"></v-img>
+						</v-col>
+					</v-row>
+				  <v-divider></v-divider>
+		  
+				  <v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn text @click="alert = false">Cancelar</v-btn>
+					<v-btn
+					  color="primary"
+					  text
+					  @click="alert = false"
+					>
+					  Enviar
+					</v-btn>
+				  </v-card-actions>
+				</v-card>
+			  </v-dialog>
+			</div>
+		  </template>
+		  <!---->
+		  <template>
+			<div class="text-center">
+			  <v-menu
+				v-model="share"
+				:close-on-content-click="false"
+				:nudge-width="200"
+				
+			  >
+		  
+				<v-card>
+				  <v-card-title>
+					  Obtener link para compartir
+				  </v-card-title>
+		  
+				  <v-divider></v-divider>
+		  
+				  <v-card-text>
+					<v-text-field label="URL" outlined disabled v-model="fileSelected.url"></v-text-field>
+				  </v-card-text>
+				  <v-row justify="center">
+							<v-col cols="auto">
+							<v-img height="200"	width="200" :src="fileSelected.url"></v-img>
+						</v-col>
+					</v-row>
+		  
+				  <v-card-actions>
+					<v-spacer></v-spacer>
+		  
+					<v-btn text @click="share = false">cerrar</v-btn>
+					<v-btn color="primary" text @click=''>Copiar link</v-btn>
+				  </v-card-actions>
+				</v-card>
+			  </v-menu>
+			</div>
+		  </template>
 		<auth-component :dialog="active_auth" :type="type_auth" v-show="active_auth"></auth-component>
 	</v-app>
 </template>
@@ -198,6 +289,7 @@
 import AuthComponent from './AuthComponent.vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import clip from 'clipboard'; // usar el portapapeles directamente
 
 export default {
 	name: 'IndexComponent',
@@ -209,6 +301,17 @@ export default {
 	},
 	data() {
 		return {
+			fav: true,
+      share: false,
+      message: false,
+      hints: true,
+			fileSelected: {},
+			alert: false,
+			email_data: {
+				subject: '',
+				message: '',
+				email_reciver: '',
+			},
 			not_user : false,
 			user: {
 				folders: [],
@@ -221,6 +324,7 @@ export default {
 			active_auth: false,
 			type_auth: '',
 			folder_selected: '',
+			type_options: '',
 		}
 	},
 	filters: {
@@ -230,6 +334,22 @@ export default {
 
 	},
 	methods: {
+		handleCopy(event) {
+			console.log(event);
+			let url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/' + this.fileSelected.url;
+			clip( event);
+		},
+		openOptions(type, file){
+			this.fileSelected = file;
+			if(type == 'email'){
+				this.alert = true;
+			}
+			else {
+				this.share = true;
+			}
+			
+			this.type_options = type;
+		},
 		getFilesFromFolder(folder){
 			let url = 'api/carpetas/archivos?api_token=' + this.user.api_token;
 
@@ -263,6 +383,7 @@ export default {
 			console.log(this.user);
 			axios.get('api/usuarios?api_token=' + this.user.api_token)
 				.then((response) => {
+					console.log('getData');
 					this.user = response.data.user;
 					console.log(this.user);
 				});
@@ -320,7 +441,8 @@ export default {
 		let userSaved = JSON.parse(localStorage.getItem('user'));
 		console.log('bebesita');
 		console.log(userSaved);
-		if ( userSaved ){
+		if ( userSaved != null ){
+			console.log('si hay usuario')
 			this.user = userSaved
 			this.getData();
 		}

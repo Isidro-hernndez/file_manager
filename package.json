@@ -28,6 +28,6 @@
         "@mdi/font": "^4.7.95",
         "clipboard": "^2.0.4",
         "sweetalert2": "^9.5.4",
-        "vuetify": "^2.2.3"
+        "vuetify": "^2.6.10"
     }
 }
